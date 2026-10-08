@@ -24,5 +24,5 @@ app.get('/api/subscriptions/:id',async(req,res)=>{const s=await getSub(req.param
 app.delete('/api/subscriptions/:id',auth,async(req,res)=>{const s=await getSub(req.params.id);if(!s)return res.status(404).json({error:'not found'});s.status='disabled';s.configs=[];await saveSub(s);res.json({ok:true});});
 app.get('/sub/:id',async(req,res)=>{const s=await getSub(req.params.id);if(!s)return res.status(404).type('text').send('Subscription not found');if(new Date(s.expiresAt)<=new Date()&&s.status==='active'){s.status='expired';await saveSub(s);}if(s.status!=='active')return res.status(410).type('text').send('Subscription expired or disabled');const body=s.configs.map(c=>c.content).filter(Boolean).join('\n\n');res.type('text/plain').send(body);});
 app.use(express.static(path.join(__dirname,'public')));
-app.get('/',(req,res)=>res.sendFile(path.join(__dirname,'public','AR.html')));
+app.get('/',(req,res)=>res.sendFile(path.join(__dirname,'AR.html')));
 init().then(()=>app.listen(PORT,'0.0.0.0',()=>console.log(`listening on ${PORT}`))).catch(e=>{console.error(e);process.exit(1)});
